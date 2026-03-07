@@ -43,21 +43,7 @@ public class LineItem {
         this.calculatedTotal = calculatedTotal;
     }
 
-
-    /**
-     * toCSV
-     * Takes data from a Product arraylist and
-     * inputs it into a comma-separated value.
-     *
-     * @return Returns a csv record with the product's
-     * ID, name, description, and cost.
-     */
     public String toTabularAlignment() {
-        return getItem() + "\t\t" + getQuantity() + "\t" + getUnitPrice() + "\t" + getCalculatedTotal();
+        return item + "\t\t" + quantity + "\t" + unitPrice + "\t" + calculatedTotal;
     }
-
-    /**  toJSON
-     * Converts an arraylist of product data into a JSON data string
-     * @return Returns a JSON data String with product data
-     */
 }

@@ -30,14 +30,11 @@ public class Invoice extends JFrame {
     double itemPrice;
     int quantity;
     LineItem lineItem;
-    String lineItemString;
     String alignedItem;
+    ArrayList<LineItem> lineItems = new ArrayList<>();
 
-    ArrayList<String> lineItems = new ArrayList<>();
+    JButton saveItemBtn;
 
-    JButton addAnotherItemBtn;
-
-    ArrayList<Product> products = new ArrayList<Product>();
     Product one = new Product("Blender", 39.99);
     Product two = new Product("Car Vacuum", 49.99);
     Product three = new Product("Digital Food Scale", 19.99);
@@ -82,11 +79,7 @@ public class Invoice extends JFrame {
     // VARIABLES FOR CALCULATING AND PRINTING RECEIPT
     JTextArea invoiceTA;
     JScrollPane scrollbar;
-    double sizeCost;
-    double toppingCost;
-    double pizzaCost;
-    double pizzaTax;
-    double totalCost;
+    double totalCost = 0.0;
     String invoice;
 
 
@@ -147,7 +140,6 @@ public class Invoice extends JFrame {
         namePnl.add(nameTA);
 
         streetTA = new JTextArea(1, 22);
-        streetTA.setEditable(false);
         streetLbl = new JLabel("Street:");
         streetPnl = new JPanel();
         streetPnl.add(streetLbl);
@@ -215,16 +207,21 @@ public class Invoice extends JFrame {
         userQuantityChoicePnl.add(labelForQuantitySelector);
         userQuantityChoicePnl.add(quantitySelector);
 
-        addAnotherItemBtn = new JButton("Save Current Item and Add Another");
-        addAnotherItemBtn.addActionListener((ActionEvent ae) -> {
-            saveLineItem();
-            clearItemAndQuantityChoices();
-            printLineItem();
+        saveItemBtn = new JButton("Save Current Item to List");
+        saveItemBtn.addActionListener((ActionEvent ae) -> {
+            if (itemSelector.getSelectedIndex() > 0 && quantitySelector.getSelectedIndex() > 0) {
+                saveLineItem();
+                clearItemAndQuantityChoices();
+                printLineItem();
+            }
+            else {
+                JOptionPane.showMessageDialog(null, "Please select both item and quantity.");
+            }
         });
 
         userChoicePnl.add(userItemChoicePnl);
         userChoicePnl.add(userQuantityChoicePnl);
-        userChoicePnl.add(addAnotherItemBtn);
+        userChoicePnl.add(saveItemBtn);
     }
 
     private void createControlPanel() {
@@ -261,45 +258,18 @@ public class Invoice extends JFrame {
     private void calculateCostAndDisplayInvoice() {
         // Generate a result string and then display it with a Message Dialog
         invoice = "======================================\n";
-        invoice += address;
+        invoice += address + "\n";
         invoice += "======================================\n";
         invoice += "Item\t\tQty\tPrice\tTotal\n";
         for (int i = 0; i < lineItems.size(); i++) {
-            lineItemString = lineItems.get(i);
+            lineItem = lineItems.get(i);
             alignedItem = lineItem.toTabularAlignment();
+            totalCost += lineItem.getCalculatedTotal();
+            invoice += alignedItem + "\n";
         }
+        invoice += "======================================\n";
+        invoice += "AMOUNT DUE: " + totalCost;
 
-
-        // SIZE CHOICE
-        // item = itemSelector.getText();
-        if (quantitySelector.getSelectedIndex() == 0) { // small
-            invoice += "Small Pizza, ";
-            sizeCost = 8.0;
-        }
-        else if (quantitySelector.getSelectedIndex() == 1) { // medium
-            invoice += "Medium Pizza, ";
-            sizeCost = 12.0;
-        }
-        else if (quantitySelector.getSelectedIndex() == 2) { // large
-            invoice += "Large Pizza, ";
-            sizeCost = 16.0;
-        }
-        else if (quantitySelector.getSelectedIndex() == 3) { // super
-            invoice += "Super Pizza, ";
-            sizeCost = 20.0;
-        }
-
-        pizzaCost = sizeCost + toppingCost;
-
-        invoice += "\n";
-        invoice += "\n";
-        invoice += "Sub-total:\t\t\t$" + pizzaCost + "\n";
-        pizzaTax = pizzaCost * 0.07;
-        invoice += "Tax:\t\t\t$" + pizzaTax + "\n";
-        invoice += "-------------------------------------------------------------\n";
-        totalCost = pizzaCost + pizzaTax;
-        invoice += "Total:\t\t\t$" + totalCost + "\n";
-        invoice += "======================================";
         invoiceTA.append(invoice);
     }
 
@@ -315,7 +285,7 @@ public class Invoice extends JFrame {
     }
 
     private void clearItemAndQuantityChoices() {
-        // itemSelector.setText("");
+        itemSelector.setSelectedIndex(0);
         quantitySelector.setSelectedIndex(0);
     }
 
@@ -340,6 +310,7 @@ public class Invoice extends JFrame {
             itemPrice = one.getCost();
         }
         else if (itemIndex == 2) {
+            Product product = one;
             item = two.getName();
             itemPrice = two.getCost();
         }
@@ -366,6 +337,6 @@ public class Invoice extends JFrame {
         quantity = quantitySelector.getSelectedIndex();
         totalCost = itemPrice * quantity;
         lineItem = new LineItem(item, quantity, itemPrice, totalCost);
-        lineItems.add(lineItem.toTabularAlignment());
+        lineItems.add(lineItem);
     }
 }
