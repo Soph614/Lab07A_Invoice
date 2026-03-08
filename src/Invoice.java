@@ -44,7 +44,7 @@ public class Invoice extends JFrame {
     Product seven = new Product("Toaster", 34.99);
 
     // INITIALIZE VARIABLES FOR ADDRESS PANEL
-    String address;
+    Address address;
 
     JLabel nameLbl;
     JTextArea nameTA;
@@ -88,16 +88,16 @@ public class Invoice extends JFrame {
         mainPnl = new JPanel();
         mainPnl.setLayout(new GridLayout(4,1));
 
-        createUserChoicePanel();
+        createUserChoicePnl();
         mainPnl.add(userChoicePnl);
 
         createAddressPnl();
         mainPnl.add(addressPnl);
 
-        createControlPanel();
+        createControlPnl();
         mainPnl.add(controlPnl);
 
-        createInvoicePanel();
+        createInvoicePnl();
         mainPnl.add(invoicePnl);
 
         add(mainPnl);
@@ -170,7 +170,7 @@ public class Invoice extends JFrame {
         addressPnl.add(zipCodePnl);
     }
 
-    private void createUserChoicePanel() {
+    private void createUserChoicePnl() {
         userChoicePnl = new JPanel();
         userChoicePnl.setBorder(new TitledBorder(new EtchedBorder(),"Order"));
         userChoicePnl.setLayout(new GridLayout(3, 1));
@@ -212,7 +212,6 @@ public class Invoice extends JFrame {
             if (itemSelector.getSelectedIndex() > 0 && quantitySelector.getSelectedIndex() > 0) {
                 saveLineItem();
                 clearItemAndQuantityChoices();
-                printLineItem();
             }
             else {
                 JOptionPane.showMessageDialog(null, "Please select both item and quantity.");
@@ -224,20 +223,33 @@ public class Invoice extends JFrame {
         userChoicePnl.add(saveItemBtn);
     }
 
-    private void createControlPanel() {
+    private void createControlPnl() {
         controlPnl = new JPanel();
         controlPnl.setBorder(new TitledBorder(new EtchedBorder(),"Next Steps"));
 
         getInvoiceBtn = new JButton("Get Invoice");
         getInvoiceBtn.addActionListener(
                 (ActionEvent ae) -> {
-                    formulateAddress();
-                    calculateCostAndDisplayInvoice();
+                    if (nameTA.getText().isEmpty() || streetTA.getText().isEmpty() || cityTA.getText().isEmpty() || stateTA.getText().isEmpty() || zipCodeTA.getText().isEmpty()) {
+                        JOptionPane.showMessageDialog(null, "Please fill in all the address fields.");
+                    }
+                    else {
+                        if (lineItems.isEmpty()) {
+                            JOptionPane.showMessageDialog(null, "Please save items to your\nlist to get an invoice.");
+                        }
+                        else {
+                            formulateAddress();
+                            calculateCostAndDisplayInvoice();
+                            clearItemAndQuantityChoices();
+                            lineItems.clear();
+                        }
+                    }
                 });
 
         clearChoicesBtn = new JButton("Clear Choices");
         clearChoicesBtn.addActionListener((ActionEvent ae) -> {
             clearItemAndQuantityChoices();
+            lineItems.clear();
         });
 
         quitBtn = new JButton("Quit");
@@ -257,23 +269,24 @@ public class Invoice extends JFrame {
 
     private void calculateCostAndDisplayInvoice() {
         // Generate a result string and then display it with a Message Dialog
-        invoice = "======================================\n";
+        invoice = "==================    INVOICE    ===================\n";
         invoice += address + "\n";
-        invoice += "======================================\n";
+        invoice += "================================================\n";
         invoice += "Item\t\tQty\tPrice\tTotal\n";
+        totalCost = 0.0;
         for (int i = 0; i < lineItems.size(); i++) {
             lineItem = lineItems.get(i);
             alignedItem = lineItem.toTabularAlignment();
-            totalCost += lineItem.getCalculatedTotal();
             invoice += alignedItem + "\n";
+            totalCost += lineItem.getCalculatedTotal();
         }
-        invoice += "======================================\n";
+        invoice += "================================================\n";
         invoice += "AMOUNT DUE: " + totalCost;
 
         invoiceTA.append(invoice);
     }
 
-    private void createInvoicePanel() {
+    private void createInvoicePnl() {
         invoicePnl = new JPanel();
         invoicePnl.setLayout(new BorderLayout());
         invoicePnl.setBorder(new TitledBorder(new EtchedBorder(),"Invoice"));
@@ -296,11 +309,7 @@ public class Invoice extends JFrame {
         state = stateTA.getText();
         zipCode = zipCodeTA.getText();
 
-        address = name + "\n" + street + "\n" + city + ", " + state + " " + zipCode;
-    }
-
-    private void printLineItem() {
-        invoiceTA.append(lineItem.toTabularAlignment());
+        address = new Address(name, street, city, state, zipCode);
     }
 
     private void saveLineItem() {
