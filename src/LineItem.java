@@ -1,33 +1,29 @@
 public class LineItem {
-    private String item;
+    private Product product;
     private int quantity;
-    private double unitPrice;
-    private double calculatedTotal;
 
-    public LineItem(String item, int quantity, double unitPrice, double calculatedTotal) {
-        this.item = item;
+    public LineItem(Product product, int quantity) {
+        this.product = product;
         this.quantity = quantity;
-        this.unitPrice = unitPrice;
-        this.calculatedTotal = calculatedTotal;
     }
 
     public String getItem() {
-        return item;
+        return product.getName();
+    }
+
+    public double getUnitPrice() {
+        return product.getUnitPrice();
     }
 
     public int getQuantity() {
         return quantity;
     }
 
-    public double getUnitPrice() {
-        return unitPrice;
-    }
-
     public double getCalculatedTotal() {
-        return calculatedTotal;
+        return getUnitPrice() * quantity;
     }
 
-    public String toTabularAlignment() {
-        return item + "\t\t" + quantity + "\t" + unitPrice + "\t" + calculatedTotal;
+    public String lineItemToTabularAlignment() {
+        return getItem() + "\t\t" + getQuantity() + "\t" + getUnitPrice() + "\t" + getCalculatedTotal();
     }
 }

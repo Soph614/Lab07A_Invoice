@@ -45,6 +45,7 @@ public class Invoice extends JFrame {
 
     // INITIALIZE VARIABLES FOR ADDRESS PANEL
     Address address;
+    Product product;
 
     JLabel nameLbl;
     JTextArea nameTA;
@@ -182,13 +183,13 @@ public class Invoice extends JFrame {
         itemSelector = new JComboBox();
 
         itemSelector.addItem("--Select--");
-        itemSelector.addItem(one.getName() + "\t\t\t" + one.getCost());
-        itemSelector.addItem(two.getName() + "\t\t\t" + two.getCost());
-        itemSelector.addItem(three.getName() + "\t" + three.getCost());
-        itemSelector.addItem(four.getName() + "\t\t" + four.getCost());
-        itemSelector.addItem(five.getName() + "\t\t" + five.getCost());
-        itemSelector.addItem(six.getName() + "\t" + six.getCost());
-        itemSelector.addItem(seven.getName() + "\t\t\t" + seven.getCost());
+        itemSelector.addItem(one.getName() + "\t\t\t" + one.getUnitPrice());
+        itemSelector.addItem(two.getName() + "\t\t\t" + two.getUnitPrice());
+        itemSelector.addItem(three.getName() + "\t" + three.getUnitPrice());
+        itemSelector.addItem(four.getName() + "\t\t" + four.getUnitPrice());
+        itemSelector.addItem(five.getName() + "\t\t" + five.getUnitPrice());
+        itemSelector.addItem(six.getName() + "\t" + six.getUnitPrice());
+        itemSelector.addItem(seven.getName() + "\t\t\t" + seven.getUnitPrice());
 
 
         userItemChoicePnl.add(labelForItemSelector);
@@ -248,6 +249,7 @@ public class Invoice extends JFrame {
 
         clearChoicesBtn = new JButton("Clear Choices");
         clearChoicesBtn.addActionListener((ActionEvent ae) -> {
+            clearAddressChoices();
             clearItemAndQuantityChoices();
             lineItems.clear();
         });
@@ -270,13 +272,13 @@ public class Invoice extends JFrame {
     private void calculateCostAndDisplayInvoice() {
         // Generate a result string and then display it with a Message Dialog
         invoice = "==================    INVOICE    ===================\n";
-        invoice += address + "\n";
+        invoice += address.formatAddress() + "\n";
         invoice += "================================================\n";
         invoice += "Item\t\tQty\tPrice\tTotal\n";
         totalCost = 0.0;
         for (int i = 0; i < lineItems.size(); i++) {
             lineItem = lineItems.get(i);
-            alignedItem = lineItem.toTabularAlignment();
+            alignedItem = lineItem.lineItemToTabularAlignment();
             invoice += alignedItem + "\n";
             totalCost += lineItem.getCalculatedTotal();
         }
@@ -297,6 +299,14 @@ public class Invoice extends JFrame {
         invoicePnl.add(scrollbar, BorderLayout.CENTER);
     }
 
+    private void clearAddressChoices() {
+        nameTA.setText("");
+        streetTA.setText("");
+        cityTA.setText("");
+        stateTA.setText("");
+        zipCodeTA.setText("");
+    }
+
     private void clearItemAndQuantityChoices() {
         itemSelector.setSelectedIndex(0);
         quantitySelector.setSelectedIndex(0);
@@ -315,37 +325,28 @@ public class Invoice extends JFrame {
     private void saveLineItem() {
         itemIndex = itemSelector.getSelectedIndex();
         if (itemIndex == 1) {
-            item = one.getName();
-            itemPrice = one.getCost();
+            product = one;
         }
         else if (itemIndex == 2) {
-            Product product = one;
-            item = two.getName();
-            itemPrice = two.getCost();
+            product = two;
         }
         else if (itemIndex == 3) {
-            item = three.getName();
-            itemPrice = three.getCost();
+            product = three;
         }
         else if (itemIndex == 4) {
-            item = four.getName();
-            itemPrice = four.getCost();
+            product = four;
         }
         else if (itemIndex == 5) {
-            item = five.getName();
-            itemPrice = five.getCost();
+            product = five;
         }
         else if (itemIndex == 6) {
-            item = six.getName();
-            itemPrice = six.getCost();
+            product = six;
         }
         else if (itemIndex == 7) {
-            item = seven.getName();
-            itemPrice = seven.getCost();
+            product = seven;
         }
         quantity = quantitySelector.getSelectedIndex();
-        totalCost = itemPrice * quantity;
-        lineItem = new LineItem(item, quantity, itemPrice, totalCost);
+        lineItem = new LineItem(product, quantity);
         lineItems.add(lineItem);
     }
 }
