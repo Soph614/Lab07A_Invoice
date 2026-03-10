@@ -171,57 +171,17 @@ public class Invoice extends JFrame {
         addressPnl.add(zipCodePnl);
     }
 
-    private void createUserChoicePnl() {
-        userChoicePnl = new JPanel();
-        userChoicePnl.setBorder(new TitledBorder(new EtchedBorder(),"Order"));
-        userChoicePnl.setLayout(new GridLayout(3, 1));
+    private void clearAddressChoices() {
+        nameTA.setText("");
+        streetTA.setText("");
+        cityTA.setText("");
+        stateTA.setText("");
+        zipCodeTA.setText("");
+    }
 
-        userItemChoicePnl = new JPanel();
-        userItemChoicePnl.setLayout(new GridLayout(1, 2));
-
-        labelForItemSelector = new JLabel("Select Item:");
-        itemSelector = new JComboBox();
-
-        itemSelector.addItem("--Select--");
-        itemSelector.addItem(one.getName() + "\t\t\t" + one.getUnitPrice());
-        itemSelector.addItem(two.getName() + "\t\t\t" + two.getUnitPrice());
-        itemSelector.addItem(three.getName() + "\t" + three.getUnitPrice());
-        itemSelector.addItem(four.getName() + "\t\t" + four.getUnitPrice());
-        itemSelector.addItem(five.getName() + "\t\t" + five.getUnitPrice());
-        itemSelector.addItem(six.getName() + "\t" + six.getUnitPrice());
-        itemSelector.addItem(seven.getName() + "\t\t\t" + seven.getUnitPrice());
-
-
-        userItemChoicePnl.add(labelForItemSelector);
-        userItemChoicePnl.add(itemSelector);
-
-        userQuantityChoicePnl = new JPanel();
-        userQuantityChoicePnl.setLayout(new GridLayout(1, 2));
-
-        labelForQuantitySelector = new JLabel("Select Quantity:");
-        quantitySelector = new JComboBox();
-        quantitySelector.addItem("--Select--");
-        for (int index = 1; index <= 100; index++) {
-            quantitySelector.addItem(index);
-        }
-
-        userQuantityChoicePnl.add(labelForQuantitySelector);
-        userQuantityChoicePnl.add(quantitySelector);
-
-        saveItemBtn = new JButton("Save Current Item to List");
-        saveItemBtn.addActionListener((ActionEvent ae) -> {
-            if (itemSelector.getSelectedIndex() > 0 && quantitySelector.getSelectedIndex() > 0) {
-                saveLineItem();
-                clearItemAndQuantityChoices();
-            }
-            else {
-                JOptionPane.showMessageDialog(null, "Please select both item and quantity.");
-            }
-        });
-
-        userChoicePnl.add(userItemChoicePnl);
-        userChoicePnl.add(userQuantityChoicePnl);
-        userChoicePnl.add(saveItemBtn);
+    private void clearItemAndQuantityChoices() {
+        itemSelector.setSelectedIndex(0);
+        quantitySelector.setSelectedIndex(0);
     }
 
     private void createControlPnl() {
@@ -299,17 +259,57 @@ public class Invoice extends JFrame {
         invoicePnl.add(scrollbar, BorderLayout.CENTER);
     }
 
-    private void clearAddressChoices() {
-        nameTA.setText("");
-        streetTA.setText("");
-        cityTA.setText("");
-        stateTA.setText("");
-        zipCodeTA.setText("");
-    }
+    private void createUserChoicePnl() {
+        userChoicePnl = new JPanel();
+        userChoicePnl.setBorder(new TitledBorder(new EtchedBorder(),"Order"));
+        userChoicePnl.setLayout(new GridLayout(3, 1));
 
-    private void clearItemAndQuantityChoices() {
-        itemSelector.setSelectedIndex(0);
-        quantitySelector.setSelectedIndex(0);
+        userItemChoicePnl = new JPanel();
+        userItemChoicePnl.setLayout(new GridLayout(1, 2));
+
+        labelForItemSelector = new JLabel("Select Item:");
+        itemSelector = new JComboBox();
+
+        itemSelector.addItem("--Select--");
+        itemSelector.addItem(one.getName() + "\t\t\t" + one.getUnitPrice());
+        itemSelector.addItem(two.getName() + "\t\t\t" + two.getUnitPrice());
+        itemSelector.addItem(three.getName() + "\t" + three.getUnitPrice());
+        itemSelector.addItem(four.getName() + "\t\t" + four.getUnitPrice());
+        itemSelector.addItem(five.getName() + "\t\t" + five.getUnitPrice());
+        itemSelector.addItem(six.getName() + "\t" + six.getUnitPrice());
+        itemSelector.addItem(seven.getName() + "\t\t\t" + seven.getUnitPrice());
+
+
+        userItemChoicePnl.add(labelForItemSelector);
+        userItemChoicePnl.add(itemSelector);
+
+        userQuantityChoicePnl = new JPanel();
+        userQuantityChoicePnl.setLayout(new GridLayout(1, 2));
+
+        labelForQuantitySelector = new JLabel("Select Quantity:");
+        quantitySelector = new JComboBox();
+        quantitySelector.addItem("--Select--");
+        for (int index = 1; index <= 100; index++) {
+            quantitySelector.addItem(index);
+        }
+
+        userQuantityChoicePnl.add(labelForQuantitySelector);
+        userQuantityChoicePnl.add(quantitySelector);
+
+        saveItemBtn = new JButton("Save Current Item to List");
+        saveItemBtn.addActionListener((ActionEvent ae) -> {
+            if (itemSelector.getSelectedIndex() > 0 && quantitySelector.getSelectedIndex() > 0) {
+                saveLineItem();
+                clearItemAndQuantityChoices();
+            }
+            else {
+                JOptionPane.showMessageDialog(null, "Please select both item and quantity.");
+            }
+        });
+
+        userChoicePnl.add(userItemChoicePnl);
+        userChoicePnl.add(userQuantityChoicePnl);
+        userChoicePnl.add(saveItemBtn);
     }
 
     private void formulateAddress() {
